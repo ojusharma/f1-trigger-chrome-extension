@@ -23,9 +23,9 @@ chrome.storage.onChanged.addListener((changes) => {
 });
 
 function checkForTriggerWords(text) {
-  if (!enabled || triggerWords.length === 0) return;
+  if (!enabled || triggerWords.length === 0 || !text) return;
 
-  const words = text.toLowerCase().split(/\s+/);
+  const words = text.trim().toLowerCase().split(/\s+/);
   for (const word of words) {
     if (triggerWords.includes(word)) {
       console.log("🚨 Trigger word detected:", word);
@@ -35,19 +35,16 @@ function checkForTriggerWords(text) {
   }
 }
 
-function attachListenersToInputs() {
-  const selector = 'input[type="text"], textarea, [contenteditable="true"]';
-  document.querySelectorAll(selector).forEach((el) => {
-    if (!el.dataset.f1racerAttached) {
-      el.addEventListener('input', (e) => {
-        checkForTriggerWords(e.target.value);
-      });
-      el.dataset.f1racerAttached = "true";
+// Listen to input events on the active element only
+document.addEventListener('input', (e) => {
+  const target = e.target;
+  
+  // Check if the target is an input element we care about
+  if (target.matches('input[type="text"], textarea, [contenteditable="true"]')) {
+    const text = target.value || target.textContent || '';
+    const match = text.match(/(\S+)\s*$/);
+    const previousWord = match ? match[1] : '';
+    checkForTriggerWords(previousWord);
+    console.log("Cur:", previousWord);
     }
-  });
-}
-
-attachListenersToInputs();
-
-const observer = new MutationObserver(() => attachListenersToInputs());
-observer.observe(document.body, { childList: true, subtree: true });
+}, true);
