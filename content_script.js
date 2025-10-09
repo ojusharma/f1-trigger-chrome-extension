@@ -27,7 +27,7 @@ function checkForTriggerWords(word) {
 
   const lowerWord = word.toLowerCase();
   if (triggerWords.includes(lowerWord)) {
-    console.log("🚨 Trigger word detected:", lowerWord);
+    console.log("Trigger word detected:", lowerWord);
     chrome.runtime.sendMessage({ action: "triggerWord", word: lowerWord });
   }
 }
@@ -92,7 +92,10 @@ function triggerRace(opts = {}) {
 
   const carCount = opts.count || 5;
   const images = opts.images || [
-    chrome.runtime.getURL('images/f1.jpg')
+    chrome.runtime.getURL('images/car-1.png'),
+    chrome.runtime.getURL('images/car-2.png'),
+    chrome.runtime.getURL('images/car-3.png'),
+    chrome.runtime.getURL('images/car-4.png')
   ];
 
   for (let i = 0; i < carCount; i++) {
@@ -118,7 +121,7 @@ function triggerRace(opts = {}) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (!message || !message.action) return;
   if (message.action === 'runAnimation') {
-    console.log('▶️ runAnimation message received with word:', message.word);
+    console.log('runAnimation message received with word:', message.word);
     try {
       triggerRace({ count: 5 });
       sendResponse({ ok: true });
