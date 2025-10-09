@@ -22,29 +22,29 @@ chrome.storage.onChanged.addListener((changes) => {
   }
 });
 
-function checkForTriggerWords(text) {
-  if (!enabled || triggerWords.length === 0 || !text) return;
+function checkForTriggerWords(word) {
+  if (!enabled || triggerWords.length === 0 || !word) return;
 
-  const words = text.trim().toLowerCase().split(/\s+/);
-  for (const word of words) {
-    if (triggerWords.includes(word)) {
-      console.log("🚨 Trigger word detected:", word);
-      chrome.runtime.sendMessage({ action: "triggerWord", word });
-      break;
-    }
+  const lowerWord = word.toLowerCase();
+  if (triggerWords.includes(lowerWord)) {
+    console.log("🚨 Trigger word detected:", lowerWord);
+    chrome.runtime.sendMessage({ action: "triggerWord", word: lowerWord });
   }
 }
 
-// Listen to input events on the active element only
+
 document.addEventListener('input', (e) => {
   const target = e.target;
-  
-  // Check if the target is an input element we care about
   if (target.matches('input[type="text"], textarea, [contenteditable="true"]')) {
     const text = target.value || target.textContent || '';
-    const match = text.match(/(\S+)\s*$/);
-    const previousWord = match ? match[1] : '';
-    checkForTriggerWords(previousWord);
-    console.log("Cur:", previousWord);
+    if (text.slice(-1) === " ") {
+      const trimmed = text.trimEnd();
+      const lastSpaceIndex = trimmed.lastIndexOf(' ');
+      const previousWord = lastSpaceIndex>= 0 ? trimmed.slice(lastSpaceIndex+1) : trimmed;
+      if (previousWord) {
+        checkForTriggerWords(previousWord);
+        console.log("Cur:", previousWord);
+      }
     }
+  }
 }, true);
