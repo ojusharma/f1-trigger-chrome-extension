@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
     const tabId = sender.tab && sender.tab.id;
     if (typeof tabId !== 'number') return;
 
-    chrome.tabs.sendMessage(tabId, { action: 'runAnimation', word: message.word }, (resp) => {
+    chrome.tabs.sendMessage(tabId, { action: 'runAnimation'}, (resp) => {
         console.log('runAnimation message sent to tab', tabId);
     });
   }
