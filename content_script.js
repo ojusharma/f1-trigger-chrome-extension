@@ -1,4 +1,4 @@
-console.log("🏁 F1 Word Racer: content script running on", location.hostname);
+console.log("F1 Word Racer: content script running on", location.hostname);
 
 let triggerWords = [];
 let enabled = false;
