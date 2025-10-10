@@ -53,7 +53,7 @@ document.addEventListener('input', (e) => {
 
 
 function triggerRace(opts = {}) {
-  if (document.getElementById('f1-racer-overlay')) return;
+//   if (document.getElementById('f1-racer-overlay')) return;
   
   const STYLE_ID = 'f1-racer-styles';
   if (!document.getElementById(STYLE_ID)) {
@@ -62,8 +62,14 @@ function triggerRace(opts = {}) {
     style.textContent = `
       @keyframes f1-move {
         0% { transform: translateX(-30vw) rotate(0deg); opacity: 1; }
-        80% { transform: translateX(110vw) rotate(0deg); opacity: 1; }
-        100% { transform: translateX(110vw) rotate(10deg); opacity: 0; }
+        85% { transform: translateX(110vw) rotate(0deg); opacity: 1; }
+        100% { transform: translateX(120vw) rotate(0deg); opacity: 0; }
+      }
+      @keyframes finish-line-fade {
+        0% { opacity: 0; }
+        15% { opacity: 0.9; }
+        70% { opacity: 0.9; }
+        100% { opacity: 0; }
       }
       .f1-overlay {
         pointer-events: none;
@@ -82,6 +88,18 @@ function triggerRace(opts = {}) {
         will-change: transform, opacity;
         filter: drop-shadow(0 6px 10px rgba(0,0,0,0.45));
       }
+      .f1-finish-line {
+        position: absolute;
+        right: 8vw;
+        top: 50%;
+        transform: translateY(-50%) rotate(90deg);
+        height: 12vh;
+        width: auto;
+        max-width: 90vh;
+        opacity: 0;
+        z-index: 0;
+        animation: finish-line-fade 3500ms ease-in-out forwards;
+      }
     `;
     document.head.appendChild(style);
   }
@@ -89,6 +107,11 @@ function triggerRace(opts = {}) {
   const overlay = document.createElement('div');
   overlay.id = 'f1-racer-overlay';
   overlay.className = 'f1-overlay';
+
+  const finishLine = document.createElement('img');
+  finishLine.className = 'f1-finish-line';
+  finishLine.src = chrome.runtime.getURL('images/finishing-line.png');
+  overlay.appendChild(finishLine);
 
   const carCount = opts.count || 5;
   const images = opts.images || [
