@@ -2,6 +2,16 @@ console.log("F1 Word Racer: content script running on", location.hostname);
 
 let triggerWords = [];
 let enabled = false;
+let vroomAudio = null;
+
+try {
+  vroomAudio = new Audio(chrome.runtime.getURL('sounds/vroom.mp3'));
+  vroomAudio.volume = 0.5;
+  vroomAudio.load();
+  console.log("Audio preloaded");
+} catch (err) {
+  console.log("Audio preload failed:", err);
+}
 
 chrome.storage.sync.get({ triggerWords: []}, (res) => {
   triggerWords = (res.triggerWords || []).map(w => w.toLowerCase());
@@ -54,9 +64,11 @@ document.addEventListener('input', (e) => {
 
 function triggerRace(opts = {}) {
 //   if (document.getElementById('f1-racer-overlay')) return;
-  const audio = new Audio(chrome.runtime.getURL('sounds/vroom.mp3'));
-  audio.volume = 0.5;
-  audio.play().catch(err => console.log('Audio play failed:', err));
+  
+  if (vroomAudio) {
+    vroomAudio.currentTime = 0;
+    vroomAudio.play().catch(err => console.log('Audio play failed:', err));
+  }
   
   const STYLE_ID = 'f1-racer-styles';
   if (!document.getElementById(STYLE_ID)) {
@@ -85,19 +97,18 @@ function triggerRace(opts = {}) {
       }
       .f1-car {
         position: absolute;
-        height: 8vh;
+        height: clamp(40px, 8vh, 100px);
         left: -40vw;
         will-change: transform, opacity;
         filter: drop-shadow(0 6px 10px rgba(0,0,0,0.45));
       }
       .f1-finish-line {
         position: absolute;
-        right: 8vw;
+        right: calc(-12vh / 2);
         top: 50%;
         transform: translateY(-50%) rotate(90deg);
         height: 12vh;
-        width: auto;
-        max-width: 90vh;
+        width: 80vh;
         opacity: 0;
         z-index: 0;
         animation: finish-line-fade 3500ms ease-in-out forwards;
@@ -127,7 +138,7 @@ function triggerRace(opts = {}) {
     const img = document.createElement('img');
     img.className = 'f1-car';
     img.src = images[i % images.length];
-    const pct = 12 + i * 13;
+    const pct = Math.min(12 + i * 13, 75);
     img.style.top = `${pct}%`;
     const duration = 1800 + (i * 100);
     const delay = i * 80;
