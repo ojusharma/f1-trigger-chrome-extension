@@ -29,7 +29,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["images/*", "styles/*"],
+      "resources": ["images/*", "styles/*", "sounds/*"],
       "matches": ["<all_urls>"]
     }
   ],

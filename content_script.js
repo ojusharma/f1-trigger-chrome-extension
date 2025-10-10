@@ -54,6 +54,9 @@ document.addEventListener('input', (e) => {
 
 function triggerRace(opts = {}) {
 //   if (document.getElementById('f1-racer-overlay')) return;
+  const audio = new Audio(chrome.runtime.getURL('sounds/vroom.mp3'));
+  audio.volume = 0.5;
+  audio.play().catch(err => console.log('Audio play failed:', err));
   
   const STYLE_ID = 'f1-racer-styles';
   if (!document.getElementById(STYLE_ID)) {
@@ -61,9 +64,8 @@ function triggerRace(opts = {}) {
     style.id = STYLE_ID;
     style.textContent = `
       @keyframes f1-move {
-        0% { transform: translateX(-30vw) rotate(0deg); opacity: 1; }
-        85% { transform: translateX(110vw) rotate(0deg); opacity: 1; }
-        100% { transform: translateX(120vw) rotate(0deg); opacity: 0; }
+        0% { transform: translateX(-30vw) rotate(0deg); }
+        100% { transform: translateX(150vw) rotate(0deg); }
       }
       @keyframes finish-line-fade {
         0% { opacity: 0; }
@@ -127,9 +129,9 @@ function triggerRace(opts = {}) {
     img.src = images[i % images.length];
     const pct = 12 + i * 13;
     img.style.top = `${pct}%`;
-    const duration = 2800 + (i * 210);
-    const delay = i * 120;
-    img.style.animation = `f1-move ${duration}ms cubic-bezier(.12,.7,.25,1) ${delay}ms forwards`;
+    const duration = 1800 + (i * 100);
+    const delay = i * 80;
+    img.style.animation = `f1-move ${duration}ms linear ${delay}ms forwards`;
     overlay.appendChild(img);
   }
 
