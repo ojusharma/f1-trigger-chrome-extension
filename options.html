@@ -1,10 +1,46 @@
 <!doctype html>
 <html>
-  <head><meta charset="utf-8" /><title>Options</title></head>
-  <body style="font-family:Arial;padding:20px;max-width:600px">
-    <h3>Trigger words</h3>
-    <textarea id="words" style="width:100%;height:120px" placeholder="one per line"></textarea>
-    <div style="margin-top:8px"><button id="save">Save</button></div>
+  <head>
+    <meta charset="utf-8" />
+    <title>F1 Word Racer - Settings</title>
+    <link rel="stylesheet" href="styles/options.css">
+  </head>
+  <body>
+    <div class="header">
+      <h1>F1 WORD RACER</h1>
+      <div class="subtitle">Configure your racing trigger words</div>
+    </div>
+    
+    <div class="container">
+      <div class="card">
+        <div class="section-title">Trigger Words</div>
+        <div class="section-description">
+          Enter one word per line. When you type any of these words followed by a space, F1 cars will race across your screen.
+        </div>
+        
+        <textarea 
+          id="words" 
+          placeholder="ferrari&#10;redbull&#10;mercedes&#10;mclaren&#10;verstappen"
+          spellcheck="false"
+        ></textarea>
+        
+        <div class="examples">
+          <div class="examples-title">💡 Examples</div>
+          <div class="examples-list">
+            Team names: ferrari, redbull, mercedes, mclaren<br>
+            Driver names: verstappen, hamilton, leclerc<br>
+            F1 terms: pole, podium, drs, safety
+          </div>
+        </div>
+        
+        <div class="button-group">
+          <button id="save">Save Changes</button>
+        </div>
+        
+        <div id="feedback" class="save-feedback"></div>
+      </div>
+    </div>
+    
     <script src="options.js"></script>
   </body>
 </html>
