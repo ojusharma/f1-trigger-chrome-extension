@@ -3,6 +3,8 @@ console.log("F1 Word Racer: content script running on", location.hostname);
 let triggerWords = [];
 let enabled = false;
 let vroomAudio = null;
+let activeRaces = 0;
+const MAX_RACES = 5;
 
 try {
   vroomAudio = new Audio(chrome.runtime.getURL('sounds/vroom.mp3'));
@@ -63,7 +65,12 @@ document.addEventListener('input', (e) => {
 
 
 function triggerRace(opts = {}) {
-//   if (document.getElementById('f1-racer-overlay')) return;
+  if (activeRaces >= MAX_RACES) {
+    return;
+  }
+  
+  activeRaces++
+  
   if (vroomAudio) {
     const audioClone = vroomAudio.cloneNode();
     audioClone.play().catch(err => console.log('Audio play failed:', err));
@@ -150,22 +157,25 @@ function triggerRace(opts = {}) {
   setTimeout(() => {
     const el = document.getElementById('f1-racer-overlay');
     if (el) el.remove();
+    activeRaces--;
+    console.log(`Race finished. Active races: ${activeRaces}`);
   }, maxDuration);
 }
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (!message || !message.action) return;
-  if (message.action === 'runAnimation') {
-    console.log('runAnimation message received with word:', message.word);
-    try {
-      triggerRace({ count: 5 });
-      await new Promise(resolve => setTimeout(resolve, 200));
-      triggerRace({ count: 5 });
-      sendResponse({ ok: true });
-    } catch (err) {
-      console.error('Animation error', err);
-      sendResponse({ ok: false, error: String(err) });
-    }
-    return true;
+  if (!message || !message.action || message.action !== 'runAnimation') {
+    return false;
   }
+  
+  try {
+    triggerRace({ count: 5 });
+    await new Promise(resolve => setTimeout(resolve, 200));
+    triggerRace({ count: 5 });
+    sendResponse({ ok: true });
+  } catch (err) {
+    console.error('Animation error', err);
+    sendResponse({ ok: false, error: String(err) });
+  }
+  
+  return true;
 });
