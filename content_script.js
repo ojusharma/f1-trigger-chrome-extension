@@ -64,10 +64,9 @@ document.addEventListener('input', (e) => {
 
 function triggerRace(opts = {}) {
 //   if (document.getElementById('f1-racer-overlay')) return;
-  
   if (vroomAudio) {
-    vroomAudio.currentTime = 0;
-    vroomAudio.play().catch(err => console.log('Audio play failed:', err));
+    const audioClone = vroomAudio.cloneNode();
+    audioClone.play().catch(err => console.log('Audio play failed:', err));
   }
   
   const STYLE_ID = 'f1-racer-styles';
@@ -154,11 +153,13 @@ function triggerRace(opts = {}) {
   }, maxDuration);
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (!message || !message.action) return;
   if (message.action === 'runAnimation') {
     console.log('runAnimation message received with word:', message.word);
     try {
+      triggerRace({ count: 5 });
+      await new Promise(resolve => setTimeout(resolve, 200));
       triggerRace({ count: 5 });
       sendResponse({ ok: true });
     } catch (err) {
