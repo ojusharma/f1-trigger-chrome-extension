@@ -82,17 +82,6 @@ Have an idea? Found a bug? Want to add more liveries or sounds? Contributions ar
 
 Fork the repo, make your changes, and open a pull request. Let's make this better together.
 
-**Ideas worth exploring:**
-- More car liveries (McLaren papaya, Mercedes silver, Alpine pink?)
-- Different sound effects (classic V10 anyone?)
-- Animation variations
-- Performance improvements
-- Accessibility features
-
-## License
-
-MIT License — Build on it, improve it, make it yours.
-
 ---
 
 **Created by Ojus Sharma**
