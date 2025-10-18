@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "F1 Word Racer (dev)",
-  "version": "0.1.1",
-  "description": "Always exect the unexpected in F1.",
+  "name": "F1 Word Racer",
+  "version": "1.0.0",
+  "description": "Watch F1 cars race across your screen when you type trigger words. Always expect the unexpected in F1.",
+  "author": "Ojus Sharma",
   "icons": {
     "16": "icons/a-16.png",
     "48": "icons/a-48.png",
@@ -13,12 +14,7 @@
     "default_title": "F1 Word Racer"
   },
   "permissions": [
-    "storage",
-    "scripting",
-    "activeTab"
-  ],
-  "host_permissions": [
-    "<all_urls>"
+    "storage"
   ],
   "content_scripts": [
     {

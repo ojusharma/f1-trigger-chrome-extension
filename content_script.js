@@ -1,5 +1,3 @@
-console.log("F1 Word Racer: content script running on", location.hostname);
-
 let triggerWords = [];
 let enabled = false;
 let vroomAudio = null;
@@ -10,19 +8,16 @@ try {
   vroomAudio = new Audio(chrome.runtime.getURL('sounds/vroom.mp3'));
   vroomAudio.volume = 0.5;
   vroomAudio.load();
-  console.log("Audio preloaded");
 } catch (err) {
-  console.log("Audio preload failed:", err);
+  console.error('F1 Word Racer: Audio preload failed', err);
 }
 
-chrome.storage.sync.get({ triggerWords: []}, (res) => {
+chrome.storage.sync.get({ triggerWords: [] }, (res) => {
   triggerWords = (res.triggerWords || []).map(w => w.toLowerCase());
-  console.log("Loaded trigger words:", triggerWords);
 });
 
-chrome.storage.local.get( { enabled: false }, (res) =>  {
-      enabled = !!res.enabled;
-      console.log("Enabled:", enabled);
+chrome.storage.local.get({ enabled: false }, (res) => {
+  enabled = !!res.enabled;
 });
 
 chrome.storage.onChanged.addListener((changes) => {
@@ -39,8 +34,7 @@ function checkForTriggerWords(word) {
 
   const lowerWord = word.toLowerCase();
   if (triggerWords.includes(lowerWord)) {
-    console.log("Trigger word detected:", lowerWord);
-    chrome.runtime.sendMessage({ action: "triggerWord", word: lowerWord });
+    chrome.runtime.sendMessage({ action: 'triggerWord', word: lowerWord });
   }
 }
 
@@ -49,31 +43,27 @@ document.addEventListener('input', (e) => {
   const target = e.target;
   if (target.matches('input[type="text"], input[type="search"], input:not([type]), textarea, [contenteditable="true"]')) {
     const text = target.value || target.textContent || '';
-    if (text.slice(-1) === " ") {
+    if (text.slice(-1) === ' ') {
       const trimmed = text.trimEnd();
       const lastSpaceIndex = trimmed.lastIndexOf(' ');
-      const previousWord = lastSpaceIndex>= 0 ? trimmed.slice(lastSpaceIndex+1) : trimmed;
+      const previousWord = lastSpaceIndex >= 0 ? trimmed.slice(lastSpaceIndex + 1) : trimmed;
       if (previousWord) {
         checkForTriggerWords(previousWord);
-        console.log("Cur:", previousWord);
       }
     }
   }
 }, true);
-
-
-
 
 function triggerRace(opts = {}) {
   if (activeRaces >= MAX_RACES) {
     return;
   }
   
-  activeRaces++
+  activeRaces++;
   
   if (vroomAudio) {
     const audioClone = vroomAudio.cloneNode();
-    audioClone.play().catch(err => console.log('Audio play failed:', err));
+    audioClone.play().catch(() => {});
   }
   
   const STYLE_ID = 'f1-racer-styles';
@@ -156,26 +146,25 @@ function triggerRace(opts = {}) {
   const maxDuration = 5000 + (carCount * 300);
   setTimeout(() => {
     const el = document.getElementById('f1-racer-overlay');
-    if (el) el.remove();
+    if (el) {
+      el.remove();
+    }
     activeRaces--;
-    console.log(`Race finished. Active races: ${activeRaces}`);
   }, maxDuration);
 }
 
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (!message || !message.action || message.action !== 'runAnimation') {
     return false;
   }
   
   try {
     triggerRace({ count: 5 });
-    await new Promise(resolve => setTimeout(resolve, 200));
-    triggerRace({ count: 5 });
     sendResponse({ ok: true });
   } catch (err) {
-    console.error('Animation error', err);
+    console.error('F1 Word Racer: Animation error', err);
     sendResponse({ ok: false, error: String(err) });
   }
   
-  return true;
+  return false;
 });
