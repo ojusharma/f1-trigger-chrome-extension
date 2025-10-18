@@ -160,6 +160,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   
   try {
     triggerRace({ count: 5 });
+    setTimeout(() => {
+      triggerRace({ count: 5 });
+    }, 200);
     sendResponse({ ok: true });
   } catch (err) {
     console.error('F1 Word Racer: Animation error', err);
