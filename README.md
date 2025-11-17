@@ -4,6 +4,8 @@ A Chrome extension that brings Formula 1 racing to your browser. Type a trigger 
 
 Because even your emails deserve a podium finish.
 
+<img width="1829" height="837" alt="image" src="https://github.com/user-attachments/assets/b97ffb38-850b-4c22-b8e3-fb32e211c70f" />
+
 ## Why This Exists
 
 F1 races happen on weekends. The rest of the time, we're just... typing. Emails, code, messages, documents.
